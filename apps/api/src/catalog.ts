@@ -43,13 +43,25 @@ export class TvdbCatalog implements TitleCatalog {
   private tokenExpiresAt = 0;
   private readonly cache = new Map<string, { expiresAt: number; titles: CatalogTitle[] }>();
 
+  private readonly apiKey: string;
+  private readonly pin: string | null;
+  private readonly baseUrl: string;
+  private readonly fetcher: Fetcher;
+  private readonly now: () => number;
+
   constructor(
-    private readonly apiKey: string,
-    private readonly pin: string | null = null,
-    private readonly baseUrl = "https://api4.thetvdb.com/v4",
-    private readonly fetcher: Fetcher = fetch,
-    private readonly now: () => number = Date.now,
-  ) {}
+    apiKey: string,
+    pin: string | null = null,
+    baseUrl = "https://api4.thetvdb.com/v4",
+    fetcher: Fetcher = fetch,
+    now: () => number = Date.now,
+  ) {
+    this.apiKey = apiKey;
+    this.pin = pin;
+    this.baseUrl = baseUrl;
+    this.fetcher = fetcher;
+    this.now = now;
+  }
 
   async search(query: string, country: string): Promise<CatalogTitle[]> {
     const cleanQuery = query.trim();
