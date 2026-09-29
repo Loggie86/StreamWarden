@@ -11,10 +11,11 @@
     "node": ">=24"
   },
   "scripts": {
-    "test": "node --experimental-strip-types --test packages/policy-engine/test/*.test.ts apps/addon/test/*.test.ts",
+    "test": "node --experimental-strip-types --test packages/policy-engine/test/*.test.ts apps/addon/test/*.test.ts apps/api/test/*.test.ts",
     "test:watch": "node --experimental-strip-types --test --watch packages/policy-engine/test/*.test.ts",
     "dashboard:build": "node scripts/build-dashboard.mjs",
     "dashboard:dev": "npm run dashboard:build && node scripts/serve-dashboard.mjs",
-    "addon:start": "node --experimental-strip-types apps/addon/src/server.ts"
+    "addon:start": "node --experimental-strip-types apps/addon/src/server.ts",
+    "api:start": "node --experimental-strip-types apps/api/src/server.ts"
   }
 }

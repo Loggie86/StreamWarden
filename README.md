@@ -6,7 +6,7 @@ Nuvio Guardian is an open-source dashboard and add-on for applying country-speci
 
 ## Status
 
-Nuvio Guardian is currently in the specification and prototype stage. The dashboard and add-on will be built first. Complete enforcement across discovery, deep links, libraries, and playback will require later native integration with Nuvio Mobile and Nuvio TV.
+Nuvio Guardian is in active prototype development. The policy engine, administrator dashboard prototype, fixture add-on, and authenticated policy API are implemented. Complete enforcement across discovery, deep links, libraries, and playback will require later native integration with Nuvio Mobile and Nuvio TV.
 
 ## Core policy
 
@@ -18,10 +18,11 @@ Nuvio Guardian is currently in the specification and prototype stage. The dashbo
 - Manage every profile from one administrator dashboard.
 - Ultimately enforce restrictions everywhere, including playback.
 
-## Planned architecture
+## Architecture
 
-- TypeScript dashboard
-- Authenticated policy API
+- TypeScript administrator dashboard
+- Magic-link-authenticated policy API
+- SQLite household, profile, override, installation, and session storage
 - Country-aware rating engine
 - Stremio-compatible Nuvio add-on
 - Self-hosted container deployment
@@ -37,50 +38,52 @@ A public hosted version is planned to be free and donation-supported. The comple
 
 The initial add-on can filter only the catalogs, search, and metadata it provides. It cannot intercept content exposed by other add-ons or every Nuvio playback route. Nuvio Guardian will not claim complete parental enforcement until native client checks are implemented.
 
-## License
-
-Nuvio Guardian is licensed under the [GNU Affero General Public License v3.0](LICENSE).
-
-
 ## Development
 
-The first implemented component is the dependency-free TypeScript policy engine.
+Node.js 24 or newer is required.
 
 ```bash
 npm test
 ```
 
-Node.js 24 or newer is required. The repository currently contains:
+The repository currently contains:
 
 - `packages/policy-engine` - rating resolution and policy decisions
-- `apps/dashboard` - administrator dashboard placeholder
-- `apps/addon` - Stremio-compatible add-on placeholder
-- `.github/workflows/test.yml` - automated policy tests
-
+- `apps/dashboard` - administrator dashboard prototype
+- `apps/addon` - profile-scoped fixture add-on
+- `apps/api` - magic-link authentication and persistent household policy API
+- `.github/workflows/test.yml` - automated tests
 
 ## Dashboard prototype
 
-The first browser dashboard uses mock household profiles and fixture titles. It supports Australian limits, unrestricted profiles, whole-title approve/block exceptions, decision previews, search, and local browser persistence.
+The browser dashboard currently uses mock household profiles and fixture titles. It supports Australian limits, unrestricted profiles, whole-title approve/block exceptions, decision previews, search, and local browser persistence.
 
 ```bash
 npm run dashboard:dev
 ```
 
-Open `http://localhost:4173`. This prototype does not connect to Nuvio or provide complete playback enforcement.
+Open `http://localhost:4173`. The public prototype is at [loggie86.github.io/nuvio-guardian](https://loggie86.github.io/nuvio-guardian/). It does not yet use the authenticated API or provide complete playback enforcement.
 
+## Policy API and magic links
+
+The API provides passwordless administrator sign-in, server-side sessions, profiles, whole-title overrides, and installation credentials backed by SQLite.
+
+```bash
+EXPOSE_DEV_MAGIC_LINKS=1 npm run api:start
+```
+
+Development links are printed to the server console. Production uses Resend and refuses to start with console email delivery. See [the API guide](apps/api/README.md) for environment variables and security behavior.
 
 ## Fixture add-on
 
-A dependency-free Stremio-compatible HTTP service now exposes profile-scoped manifests, filtered movie and series catalogs, search, and metadata.
+A dependency-free Stremio-compatible HTTP service exposes profile-scoped manifests, filtered movie and series catalogs, search, and metadata.
 
 ```bash
 npm run addon:start
 ```
 
-See [the add-on guide](apps/addon/README.md) for fixture installation URLs. The service uses fake titles and public demo tokens until authentication, persistence, and licensed rating data are connected.
+See [the add-on guide](apps/addon/README.md) for fixture installation URLs. The service uses fake titles and public demo tokens until it is connected to the policy API and licensed rating data.
 
-## Dashboard deployment
+## License
 
-The repository includes a GitHub Pages workflow for the dashboard. Once Pages is configured to use GitHub Actions, deployments will publish to:
-
-`https://loggie86.github.io/nuvio-guardian/`
+Nuvio Guardian is licensed under the [GNU Affero General Public License v3.0](LICENSE).
