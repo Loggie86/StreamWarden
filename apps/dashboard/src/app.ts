@@ -221,10 +221,10 @@ function evaluate(
   override?: Override,
 ): { allowed: boolean; reason: string } {
   if (override === "BLOCK") return { allowed: false, reason: "Explicit block" };
+  if (title.rating === "RC") return { allowed: false, reason: "Refused classification" };
   if (profile.limit === "UNRESTRICTED") return { allowed: true, reason: "Unrestricted profile" };
   if (override === "APPROVE") return { allowed: true, reason: "Explicit approval" };
   if (title.rating === null) return { allowed: false, reason: "Rating unknown" };
-  if (title.rating === "RC") return { allowed: false, reason: "Refused classification" };
 
   const titleRank = orderedRatings.indexOf(title.rating);
   const limitRank = orderedRatings.indexOf(profile.limit);

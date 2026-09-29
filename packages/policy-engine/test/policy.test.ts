@@ -40,6 +40,20 @@ describe("Australian household policy", () => {
     }
   });
 
+  it("never allows RC, including by approval or on an unrestricted profile", () => {
+    const approved = evaluatePolicy({
+      policy: profiles.childC,
+      ratings: [rating("RC")],
+      override: { decision: "APPROVE" },
+    });
+    const unrestricted = evaluatePolicy({
+      policy: profiles.adultA,
+      ratings: [rating("RC")],
+    });
+    assert.deepEqual([approved.allowed, approved.reason], [false, "REFUSED_CLASSIFICATION"]);
+    assert.deepEqual([unrestricted.allowed, unrestricted.reason], [false, "REFUSED_CLASSIFICATION"]);
+  });
+
   it("blocks missing or unrecognised ratings", () => {
     const missing = evaluatePolicy({ policy: profiles.childB, ratings: [] });
     const unrecognised = evaluatePolicy({ policy: profiles.childB, ratings: [rating("TV-14")] });

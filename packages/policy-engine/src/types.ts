@@ -30,7 +30,8 @@ export type DecisionReason =
   | "RATING_ALLOWED"
   | "RATING_TOO_HIGH"
   | "RATING_UNKNOWN"
-  | "RATING_AMBIGUOUS";
+  | "RATING_AMBIGUOUS"
+  | "REFUSED_CLASSIFICATION";
 
 export interface PolicyDecision {
   allowed: boolean;

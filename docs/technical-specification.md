@@ -38,12 +38,12 @@ These values are test fixtures, not hard-coded product defaults.
 
 Rules are evaluated in this order:
 
-1. If the profile is unrestricted, allow the title unless explicitly blocked.
-2. If the title is explicitly blocked for the profile, block it.
-3. If the title is explicitly approved for the profile, allow it.
-4. Resolve the title's classification for the household's selected country.
-5. If no reliable classification can be resolved, block it.
-6. Allow when the resolved classification is at or below the profile limit; otherwise block.
+1. If the resolved classification is `RC`, block it regardless of profile mode or override.
+2. If the profile is unrestricted, allow the title unless explicitly blocked.\n3. If the title is explicitly blocked for the profile, block it.
+4. If the title is explicitly approved for the profile, allow it.
+5. Resolve the title's classification for the household's selected country.
+6. If no reliable classification can be resolved, block it.
+7. Allow when the resolved classification is at or below the profile limit; otherwise block.
 
 Every decision returns a machine-readable reason:
 
@@ -53,7 +53,7 @@ Every decision returns a machine-readable reason:
 - `RATING_ALLOWED`
 - `RATING_TOO_HIGH`
 - `RATING_UNKNOWN`
-- `RATING_AMBIGUOUS`
+- `RATING_AMBIGUOUS`\n- `REFUSED_CLASSIFICATION`
 
 ## 5. Rating model
 
@@ -63,7 +63,7 @@ Initial Australian scale:
 
 `G < PG < M < MA15+ < R18+ < X18+`
 
-`RC` is always blocked. Non-film classifications and advisory labels are not silently converted into film ratings.
+`RC` is always blocked and cannot be overridden, including for unrestricted profiles. Non-film classifications and advisory labels are not silently converted into film ratings.
 
 Rating resolution priority:
 

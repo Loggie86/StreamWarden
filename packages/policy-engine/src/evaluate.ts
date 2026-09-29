@@ -8,6 +8,18 @@ export function evaluatePolicy(input: EvaluatePolicyInput): PolicyDecision {
     return decision(false, "EXPLICIT_BLOCK");
   }
 
+  const scale = getRatingScale(policy.country);
+  const resolved = resolveRating(policy.country, ratings);
+  if (resolved.label !== null && scale?.alwaysBlocked.includes(resolved.label)) {
+    return {
+      allowed: false,
+      reason: "REFUSED_CLASSIFICATION",
+      resolvedRating: resolved.label,
+      sources: [...new Set(resolved.records.map((record) => record.source))],
+      ambiguous: resolved.ambiguous,
+    };
+  }
+
   if (policy.unrestricted || policy.maximumRating === null) {
     return decision(true, "PROFILE_UNRESTRICTED");
   }
@@ -16,10 +28,8 @@ export function evaluatePolicy(input: EvaluatePolicyInput): PolicyDecision {
     return decision(true, "EXPLICIT_APPROVAL");
   }
 
-  const scale = getRatingScale(policy.country);
   if (!scale) return decision(false, "RATING_UNKNOWN");
 
-  const resolved = resolveRating(policy.country, ratings);
   if (resolved.label === null) return decision(false, "RATING_UNKNOWN");
 
   const titleRank = ratingRank(scale, resolved.label);
