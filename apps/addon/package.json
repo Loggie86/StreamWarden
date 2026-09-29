@@ -1,0 +1,6 @@
+{
+  "name": "@nuvio-guardian/addon",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module"
+}

@@ -40,3 +40,19 @@ The initial add-on can filter only the catalogs, search, and metadata it provide
 ## License
 
 Nuvio Guardian is licensed under the [GNU Affero General Public License v3.0](LICENSE).
+
+
+## Development
+
+The first implemented component is the dependency-free TypeScript policy engine.
+
+```bash
+npm test
+```
+
+Node.js 24 or newer is required. The repository currently contains:
+
+- `packages/policy-engine` - rating resolution and policy decisions
+- `apps/dashboard` - administrator dashboard placeholder
+- `apps/addon` - Stremio-compatible add-on placeholder
+- `.github/workflows/test.yml` - automated policy tests

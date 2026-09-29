@@ -1,0 +1,17 @@
+{
+  "name": "nuvio-guardian",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "node --experimental-strip-types --test packages/policy-engine/test/*.test.ts",
+    "test:watch": "node --experimental-strip-types --test --watch packages/policy-engine/test/*.test.ts"
+  }
+}
