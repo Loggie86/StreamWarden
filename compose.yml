@@ -1,0 +1,30 @@
+services:
+  streamwarden:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    image: streamwarden:local
+    container_name: streamwarden
+    restart: unless-stopped
+    ports:
+      - "${STREAMWARDEN_PORT:-8787}:8080"
+    environment:
+      NODE_ENV: development
+      HOST: 0.0.0.0
+      PORT: 8080
+      PUBLIC_BASE_URL: "${PUBLIC_BASE_URL:-http://localhost:8787}"
+      DASHBOARD_DIR: /app/apps/dashboard/dist
+      STREAMWARDEN_DB_PATH: /data/streamwarden.sqlite
+      MAIL_PROVIDER: console
+      EXPOSE_DEV_MAGIC_LINKS: "1"
+    volumes:
+      - streamwarden-data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  streamwarden-data:
