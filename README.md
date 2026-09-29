@@ -67,3 +67,20 @@ npm run dashboard:dev
 ```
 
 Open `http://localhost:4173`. This prototype does not connect to Nuvio or provide complete playback enforcement.
+
+
+## Fixture add-on
+
+A dependency-free Stremio-compatible HTTP service now exposes profile-scoped manifests, filtered movie and series catalogs, search, and metadata.
+
+```bash
+npm run addon:start
+```
+
+See [the add-on guide](apps/addon/README.md) for fixture installation URLs. The service uses fake titles and public demo tokens until authentication, persistence, and licensed rating data are connected.
+
+## Dashboard deployment
+
+The repository includes a GitHub Pages workflow for the dashboard. Once Pages is configured to use GitHub Actions, deployments will publish to:
+
+`https://loggie86.github.io/nuvio-guardian/`
