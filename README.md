@@ -63,7 +63,7 @@ The browser dashboard supports Australian limits, unrestricted profiles, whole-t
 npm run dashboard:dev
 ```
 
-Open `http://localhost:4173` for demo mode. The public prototype is at [loggie86.github.io/streamwarden](https://loggie86.github.io/streamwarden/). A hosted or self-hosted API deployment serves the same dashboard with magic-link sign-in and persistent household data. Complete playback enforcement is not implemented yet.
+Open `http://localhost:4173` for demo mode. The public prototype is at [loggie86.github.io/StreamWarden](https://loggie86.github.io/StreamWarden/). A hosted or self-hosted API deployment serves the same dashboard with magic-link sign-in and persistent household data. Complete playback enforcement is not implemented yet.
 
 ## Policy API and magic links
 
