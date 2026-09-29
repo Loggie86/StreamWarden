@@ -38,10 +38,11 @@ These values are test fixtures, not hard-coded product defaults.
 
 Rules are evaluated in this order:
 
-1. If the resolved classification is `RC`, block it regardless of profile mode or override.
-2. If the profile is unrestricted, allow the title unless explicitly blocked.\n3. If the title is explicitly blocked for the profile, block it.
-4. If the title is explicitly approved for the profile, allow it.
-5. Resolve the title's classification for the household's selected country.
+1. If the title is explicitly blocked for the profile, block it.
+2. Resolve the title's classification for the household's selected country.
+3. If the resolved classification is `RC`, block it regardless of profile mode or override.
+4. If the profile is unrestricted, allow the title.
+5. If the title is explicitly approved for the profile, allow it.
 6. If no reliable classification can be resolved, block it.
 7. Allow when the resolved classification is at or below the profile limit; otherwise block.
 
