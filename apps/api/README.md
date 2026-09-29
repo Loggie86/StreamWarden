@@ -19,11 +19,11 @@ the service from the repository root. The API listens on port 8080 by default.
 
 ```text
 NODE_ENV=production
-PUBLIC_BASE_URL=https://guardian.example.com
-GUARDIAN_DB_PATH=/data/guardian.sqlite
+PUBLIC_BASE_URL=https://app.streamwarden.example
+STREAMWARDEN_DB_PATH=/data/streamwarden.sqlite
 MAIL_PROVIDER=resend
 RESEND_API_KEY=...
-AUTH_FROM_EMAIL=Nuvio Guardian <login@example.com>
+AUTH_FROM_EMAIL=StreamWarden <login@example.com>
 ```
 
 Only SHA-256 token hashes are stored. Magic links expire after 15 minutes and

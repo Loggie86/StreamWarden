@@ -19,7 +19,7 @@ export interface StoredProfile {
   primary: boolean;
 }
 
-export class GuardianStore {
+export class StreamWardenStore {
   readonly database: DatabaseSync;
 
   constructor(path: string) {

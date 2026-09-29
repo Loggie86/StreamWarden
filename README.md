@@ -1,12 +1,12 @@
-# Nuvio Guardian
+# StreamWarden
 
-Profile-aware parental controls for Nuvio.
+Profile-aware parental controls for streaming platforms.
 
-Nuvio Guardian is an open-source dashboard and add-on for applying country-specific content-rating limits to individual Nuvio profiles, with explicit movie and series approvals or blocks.
+StreamWarden is an open-source dashboard and policy service for applying country-specific content-rating limits to individual streaming profiles, with explicit movie and series approvals or blocks. Nuvio is the first integration; Plex and Jellyfin are planned.
 
 ## Status
 
-Nuvio Guardian is in active prototype development. The policy engine, administrator dashboard prototype, fixture add-on, and authenticated policy API are implemented. Complete enforcement across discovery, deep links, libraries, and playback will require later native integration with Nuvio Mobile and Nuvio TV.
+StreamWarden is in active prototype development. The policy engine, administrator dashboard prototype, fixture Nuvio add-on, and authenticated policy API are implemented. Complete enforcement across discovery, deep links, libraries, and playback will require platform-specific integrations.
 
 ## Core policy
 
@@ -24,7 +24,8 @@ Nuvio Guardian is in active prototype development. The policy engine, administra
 - Magic-link-authenticated policy API
 - SQLite household, profile, override, installation, and session storage
 - Country-aware rating engine
-- Stremio-compatible Nuvio add-on
+- Connector and enforcement adapters for each streaming platform
+- Stremio-compatible Nuvio add-on as the first adapter
 - Self-hosted container deployment
 - Later native Nuvio Mobile and TV enforcement adapters
 
@@ -36,7 +37,7 @@ A public hosted version is planned to be free and donation-supported. The comple
 
 ## Important limitation
 
-The initial add-on can filter only the catalogs, search, and metadata it provides. It cannot intercept content exposed by other add-ons or every Nuvio playback route. Nuvio Guardian will not claim complete parental enforcement until native client checks are implemented.
+The initial Nuvio add-on can filter only the catalogs, search, and metadata it provides. It cannot intercept content exposed by other add-ons or every playback route. StreamWarden will not claim complete parental enforcement until native client checks are implemented.
 
 ## Development
 
@@ -62,7 +63,7 @@ The browser dashboard supports Australian limits, unrestricted profiles, whole-t
 npm run dashboard:dev
 ```
 
-Open `http://localhost:4173` for demo mode. The public prototype is at [loggie86.github.io/nuvio-guardian](https://loggie86.github.io/nuvio-guardian/). A hosted or self-hosted API deployment serves the same dashboard with magic-link sign-in and persistent household data. Complete playback enforcement is not implemented yet.
+Open `http://localhost:4173` for demo mode. The public prototype is at [loggie86.github.io/streamwarden](https://loggie86.github.io/streamwarden/). A hosted or self-hosted API deployment serves the same dashboard with magic-link sign-in and persistent household data. Complete playback enforcement is not implemented yet.
 
 ## Policy API and magic links
 
@@ -86,4 +87,4 @@ See [the add-on guide](apps/addon/README.md) for fixture installation URLs. The 
 
 ## License
 
-Nuvio Guardian is licensed under the [GNU Affero General Public License v3.0](LICENSE).
+StreamWarden is licensed under the [GNU Affero General Public License v3.0](LICENSE).

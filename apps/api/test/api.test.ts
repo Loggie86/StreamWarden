@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import type { AddressInfo } from "node:net";
 import type { ApiConfig } from "../src/config.ts";
-import { GuardianStore } from "../src/database.ts";
+import { StreamWardenStore } from "../src/database.ts";
 import type { MagicLinkMailer } from "../src/mailer.ts";
 import { createApiServer } from "../src/server.ts";
 
@@ -27,7 +27,7 @@ const config: ApiConfig = {
   magicLinkLifetimeMs: 15 * 60 * 1000,
   sessionLifetimeMs: 30 * 24 * 60 * 60 * 1000,
 };
-const store = new GuardianStore(":memory:");
+const store = new StreamWardenStore(":memory:");
 const server = createApiServer({ config, store, mailer });
 let origin = "";
 let sessionCookie = "";
@@ -79,7 +79,7 @@ describe("magic-link policy API", () => {
     const verified = await request(path);
     assert.equal(verified.status, 302);
     const setCookie = verified.headers.get("set-cookie");
-    assert.match(setCookie ?? "", /guardian_session=/);
+    assert.match(setCookie ?? "", /streamwarden_session=/);
     assert.match(setCookie ?? "", /HttpOnly/);
     assert.match(setCookie ?? "", /SameSite=Lax/);
     sessionCookie = (setCookie ?? "").split(";")[0];
@@ -117,7 +117,7 @@ describe("magic-link policy API", () => {
   it("persists whole-title overrides and creates a one-time installation secret", async () => {
     const profiles = await (await request("/api/profiles")).json();
     const child = profiles.profiles.find((profile: { name: string }) => profile.name === "Child");
-    const override = await request(`/api/profiles/${child.id}/overrides/guardian%3Amovie%3Anight-train`, {
+    const override = await request(`/api/profiles/${child.id}/overrides/streamwarden%3Amovie%3Anight-train`, {
       method: "PUT",
       body: JSON.stringify({ decision: "BLOCK", mediaType: "movie", titleName: "Night Train" }),
     });

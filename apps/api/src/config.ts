@@ -27,7 +27,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
   return {
     host: env.HOST ?? "0.0.0.0",
     port: Number.parseInt(env.PORT ?? "8080", 10),
-    databasePath: env.GUARDIAN_DB_PATH ?? "./data/guardian.sqlite",
+    databasePath: env.STREAMWARDEN_DB_PATH ?? env.GUARDIAN_DB_PATH ?? "./data/streamwarden.sqlite",
     publicBaseUrl: (env.PUBLIC_BASE_URL ?? "http://localhost:8080").replace(/\/$/, ""),
     dashboardPath: env.DASHBOARD_PATH ?? "/",
     dashboardDirectory: env.DASHBOARD_DIR ?? "./apps/dashboard/dist",

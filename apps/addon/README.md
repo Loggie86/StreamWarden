@@ -1,4 +1,4 @@
-# Add-on
+# StreamWarden for Nuvio add-on
 
 The fixture-backed add-on exposes Stremio-compatible manifest, catalog, search,
 and metadata resources filtered through the shared policy engine.

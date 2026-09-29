@@ -4,11 +4,11 @@ import { evaluatePolicy } from "../../../packages/policy-engine/src/index.ts";
 import { profiles, titles, type AddonType, type FixtureProfile, type FixtureTitle } from "./fixtures.ts";
 
 const catalogIds: Record<AddonType, string> = {
-  movie: "guardian-movies",
-  series: "guardian-series",
+  movie: "streamwarden-movies",
+  series: "streamwarden-series",
 };
 
-export function createGuardianServer() {
+export function createStreamWardenServer() {
   return createServer((request, response) => {
     try {
       route(request, response);
@@ -30,7 +30,7 @@ function route(request: IncomingMessage, response: ServerResponse): void {
     return;
   }
 
-  const url = new URL(request.url ?? "/", "http://guardian.local");
+  const url = new URL(request.url ?? "/", "http://streamwarden.local");
   if (url.pathname === "/healthz") {
     send(response, 200, { status: "ok" }, request.method === "HEAD");
     return;
@@ -81,27 +81,27 @@ function route(request: IncomingMessage, response: ServerResponse): void {
 
 function manifest(profile: FixtureProfile) {
   return {
-    id: "community.nuvio.guardian",
+    id: "community.streamwarden.nuvio",
     version: "0.1.0",
-    name: `Nuvio Guardian - ${profile.name}`,
-    description: "Profile-aware catalogs filtered by Nuvio Guardian policy.",
+    name: `StreamWarden for Nuvio - ${profile.name}`,
+    description: "Profile-aware Nuvio catalogs filtered by StreamWarden policy.",
     resources: ["catalog", "meta"],
     types: ["movie", "series"],
     catalogs: [
       {
         type: "movie",
         id: catalogIds.movie,
-        name: "Guardian Movies",
+        name: "StreamWarden Movies",
         extra: [{ name: "search", isRequired: false }],
       },
       {
         type: "series",
         id: catalogIds.series,
-        name: "Guardian Series",
+        name: "StreamWarden Series",
         extra: [{ name: "search", isRequired: false }],
       },
     ],
-    idPrefixes: ["guardian:"],
+    idPrefixes: ["streamwarden:"],
     behaviorHints: { configurable: false, configurationRequired: false },
   };
 }
@@ -132,7 +132,7 @@ function toMetaPreview(title: FixtureTitle) {
 function toMeta(title: FixtureTitle) {
   return {
     ...toMetaPreview(title),
-    guardian: {
+    streamwarden: {
       country: title.rating?.country ?? "AU",
       rating: title.rating?.label ?? null,
       source: title.rating?.source ?? null,
@@ -180,7 +180,7 @@ const isDirectRun = process.argv[1]
 if (isDirectRun) {
   const port = Number.parseInt(process.env.PORT ?? "7000", 10);
   const host = process.env.HOST ?? "0.0.0.0";
-  createGuardianServer().listen(port, host, () => {
-    console.log(`Nuvio Guardian add-on listening on http://${host}:${port}`);
+  createStreamWardenServer().listen(port, host, () => {
+    console.log(`StreamWarden for Nuvio add-on listening on http://${host}:${port}`);
   });
 }

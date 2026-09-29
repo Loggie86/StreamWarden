@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import { after, before, describe, it } from "node:test";
 import type { AddressInfo } from "node:net";
 import { PROFILE_TOKENS } from "../src/fixtures.ts";
-import { createGuardianServer } from "../src/server.ts";
+import { createStreamWardenServer } from "../src/server.ts";
 
-const server = createGuardianServer();
+const server = createStreamWardenServer();
 let origin = "";
 
 before(async () => {
@@ -28,21 +28,21 @@ describe("fixture add-on", () => {
   it("serves a profile-scoped manifest", async () => {
     const { response, body } = await get(`/${PROFILE_TOKENS.childA}/manifest.json`);
     assert.equal(response.status, 200);
-    assert.equal(body.name, "Nuvio Guardian - Child A");
+    assert.equal(body.name, "StreamWarden for Nuvio - Child A");
     assert.deepEqual(body.resources, ["catalog", "meta"]);
     assert.equal(response.headers.get("access-control-allow-origin"), "*");
   });
 
   it("filters the PG movie catalog", async () => {
     const { body } = await get(
-      `/${PROFILE_TOKENS.childA}/catalog/movie/guardian-movies.json`,
+      `/${PROFILE_TOKENS.childA}/catalog/movie/streamwarden-movies.json`,
     );
     assert.deepEqual(body.metas.map((meta: { name: string }) => meta.name), ["Family Orbit"]);
   });
 
   it("allows M titles for the M profile", async () => {
     const { body } = await get(
-      `/${PROFILE_TOKENS.childB}/catalog/movie/guardian-movies.json`,
+      `/${PROFILE_TOKENS.childB}/catalog/movie/streamwarden-movies.json`,
     );
     assert.deepEqual(body.metas.map((meta: { name: string }) => meta.name), [
       "Family Orbit",
@@ -52,34 +52,34 @@ describe("fixture add-on", () => {
 
   it("supports Stremio-style search extras", async () => {
     const { body } = await get(
-      `/${PROFILE_TOKENS.childC}/catalog/series/guardian-series/search=wild.json`,
+      `/${PROFILE_TOKENS.childC}/catalog/series/streamwarden-series/search=wild.json`,
     );
     assert.deepEqual(body.metas.map((meta: { name: string }) => meta.name), ["Wild Signal"]);
   });
 
   it("hides unknown metadata for a restricted profile", async () => {
     const { body } = await get(
-      `/${PROFILE_TOKENS.childC}/meta/movie/guardian:movie:unclassified.json`,
+      `/${PROFILE_TOKENS.childC}/meta/movie/streamwarden:movie:unclassified.json`,
     );
     assert.equal(body.meta, null);
   });
 
   it("keeps RC hidden from an unrestricted profile", async () => {
     const { body } = await get(
-      `/${PROFILE_TOKENS.adultA}/meta/movie/guardian:movie:rc-safety.json`,
+      `/${PROFILE_TOKENS.adultA}/meta/movie/streamwarden:movie:rc-safety.json`,
     );
     assert.equal(body.meta, null);
   });
 
   it("returns allowed metadata with rating provenance", async () => {
     const { body } = await get(
-      `/${PROFILE_TOKENS.childB}/meta/movie/guardian:movie:night-train.json`,
+      `/${PROFILE_TOKENS.childB}/meta/movie/streamwarden:movie:night-train.json`,
     );
     assert.equal(body.meta.name, "Night Train");
-    assert.deepEqual(body.meta.guardian, {
+    assert.deepEqual(body.meta.streamwarden, {
       country: "AU",
       rating: "M",
-      source: "guardian-fixture",
+      source: "streamwarden-fixture",
     });
   });
 

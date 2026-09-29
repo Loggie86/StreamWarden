@@ -1,14 +1,14 @@
-# Nuvio Guardian — Technical Specification v0.1
+# StreamWarden — Technical Specification v0.1
 
 Status: Draft for approval  
 Date: 29 September 2026  
-Scope: Dashboard and add-on first; native Nuvio enforcement later
+Scope: Cross-platform policy service; Nuvio integration first
 
 ## 1. Product goal
 
-Nuvio Guardian gives a household administrator one dashboard for applying country-specific content-rating limits to every Nuvio profile and for explicitly approving or blocking individual movies and series.
+StreamWarden gives a household administrator one dashboard for applying country-specific content-rating limits across supported streaming profiles and for explicitly approving or blocking individual movies and series. Nuvio is the first integration, with Plex and Jellyfin planned.
 
-The initial dashboard/add-on release filters Guardian-provided catalogs and search. Complete enforcement across every Nuvio entry point requires later changes to Nuvio Mobile and Nuvio TV.
+The initial dashboard/add-on release filters StreamWarden-provided catalogs and search. Complete enforcement across every Nuvio entry point requires later changes to Nuvio Mobile and Nuvio TV.
 
 ## 2. Agreed requirements
 
@@ -85,8 +85,8 @@ The dashboard will provide:
 - Movie/series search for explicit approval or blocking.
 - A decision inspector showing the rating, source and reason a title is allowed or blocked.
 - Lists of all overrides, sortable by profile, title and decision.
-- A setup status page showing which profiles have Guardian configured.
-- Export and import of Guardian policy data.
+- A setup status page showing which profiles have StreamWarden configured.
+- Export and import of StreamWarden policy data.
 
 The primary profile is the administrator. Child profiles cannot change policy. Administrative actions require a fresh authenticated session; a later native integration may additionally use Nuvio's profile PIN.
 
@@ -155,7 +155,7 @@ The initial implementation should use TypeScript across dashboard, API, rating e
 
 ## 12. Product and distribution model
 
-- Product name: **Nuvio Guardian**.
+- Product name: **StreamWarden**.
 - A publicly hosted version will be available free of charge.
 - The hosted service will be donation-supported, with no restriction features placed behind payment.
 - The complete project will also support self-hosting.

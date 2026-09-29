@@ -57,14 +57,14 @@ function australianRating(label: string): RatingRecord {
   return {
     country: "AU",
     label,
-    source: "guardian-fixture",
+    source: "streamwarden-fixture",
     confidence: "authoritative",
   };
 }
 
 export const titles: FixtureTitle[] = [
   {
-    id: "guardian:movie:family-orbit",
+    id: "streamwarden:movie:family-orbit",
     type: "movie",
     name: "Family Orbit",
     year: 2025,
@@ -73,7 +73,7 @@ export const titles: FixtureTitle[] = [
     rating: australianRating("G"),
   },
   {
-    id: "guardian:series:blue-harbour",
+    id: "streamwarden:series:blue-harbour",
     type: "series",
     name: "Blue Harbour",
     year: 2024,
@@ -82,7 +82,7 @@ export const titles: FixtureTitle[] = [
     rating: australianRating("PG"),
   },
   {
-    id: "guardian:movie:night-train",
+    id: "streamwarden:movie:night-train",
     type: "movie",
     name: "Night Train",
     year: 2026,
@@ -91,7 +91,7 @@ export const titles: FixtureTitle[] = [
     rating: australianRating("M"),
   },
   {
-    id: "guardian:series:wild-signal",
+    id: "streamwarden:series:wild-signal",
     type: "series",
     name: "Wild Signal",
     year: 2025,
@@ -100,7 +100,7 @@ export const titles: FixtureTitle[] = [
     rating: australianRating("MA15+"),
   },
   {
-    id: "guardian:movie:last-outpost",
+    id: "streamwarden:movie:last-outpost",
     type: "movie",
     name: "The Last Outpost",
     year: 2023,
@@ -109,7 +109,7 @@ export const titles: FixtureTitle[] = [
     rating: australianRating("R18+"),
   },
   {
-    id: "guardian:movie:unclassified",
+    id: "streamwarden:movie:unclassified",
     type: "movie",
     name: "Unclassified Fixture",
     year: 2026,
@@ -118,7 +118,7 @@ export const titles: FixtureTitle[] = [
     rating: null,
   },
   {
-    id: "guardian:movie:rc-safety",
+    id: "streamwarden:movie:rc-safety",
     type: "movie",
     name: "RC Safety Fixture",
     year: 2026,

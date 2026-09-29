@@ -37,5 +37,5 @@ createServer(async (request, response) => {
     response.writeHead(404).end("Not found");
   }
 }).listen(4173, "127.0.0.1", () => {
-  console.log("Nuvio Guardian dashboard: http://localhost:4173");
+  console.log("StreamWarden dashboard: http://localhost:4173");
 });

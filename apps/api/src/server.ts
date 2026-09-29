@@ -4,14 +4,14 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { extname, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
 import { loadConfig, type ApiConfig } from "./config.ts";
-import { GuardianStore, type SessionHousehold } from "./database.ts";
+import { StreamWardenStore, type SessionHousehold } from "./database.ts";
 import { createMailer, type MagicLinkMailer } from "./mailer.ts";
 
 const validRatings = new Set(["G", "PG", "M", "MA15+", "R18+", "X18+"]);
 
 export interface ApiDependencies {
   config: ApiConfig;
-  store: GuardianStore;
+  store: StreamWardenStore;
   mailer: MagicLinkMailer;
   now?: () => number;
 }
@@ -218,9 +218,9 @@ export function createApiServer(dependencies: ApiDependencies) {
   });
 }
 
-function authenticate(request: IncomingMessage, store: GuardianStore, now: number): SessionHousehold | null {
+function authenticate(request: IncomingMessage, store: StreamWardenStore, now: number): SessionHousehold | null {
   const cookies = parseCookies(request.headers.cookie ?? "");
-  const token = cookies.guardian_session;
+  const token = cookies.streamwarden_session;
   return token ? store.getSession(hash(token), now) : null;
 }
 
@@ -305,7 +305,7 @@ function isTrustedMutation(request: IncomingMessage, config: ApiConfig): boolean
 
 function sessionCookie(token: string, config: ApiConfig): string {
   return [
-    `guardian_session=${encodeURIComponent(token)}`,
+    `streamwarden_session=${encodeURIComponent(token)}`,
     "HttpOnly",
     "SameSite=Lax",
     "Path=/",
@@ -316,7 +316,7 @@ function sessionCookie(token: string, config: ApiConfig): string {
 
 function clearSessionCookie(config: ApiConfig): string {
   return [
-    "guardian_session=",
+    "streamwarden_session=",
     "HttpOnly",
     "SameSite=Lax",
     "Path=/",
@@ -400,9 +400,9 @@ const isDirectRun = process.argv[1]
 
 if (isDirectRun) {
   const config = loadConfig();
-  const store = new GuardianStore(config.databasePath);
+  const store = new StreamWardenStore(config.databasePath);
   const mailer = createMailer(config);
   createApiServer({ config, store, mailer }).listen(config.port, config.host, () => {
-    console.log(`Nuvio Guardian API listening on ${config.publicBaseUrl}`);
+    console.log(`StreamWarden API listening on ${config.publicBaseUrl}`);
   });
 }

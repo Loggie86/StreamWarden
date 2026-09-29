@@ -13,16 +13,16 @@ interface DashboardState {
   overrides: Record<string, Record<string, Override>>;
 }
 
-const storageKey = "nuvio-guardian-dashboard-v1";
+const storageKey = "streamwarden-dashboard-v1";
 const ratings: Rating[] = ["G", "PG", "M", "MA15+", "R18+", "X18+", "RC"];
 const orderedRatings: Rating[] = ["G", "PG", "M", "MA15+", "R18+", "X18+"];
 const fixtureTitles: FixtureTitle[] = [
-  { id: "guardian:movie:family-orbit", name: "Family Orbit", type: "Movie", year: 2025, rating: "G" },
-  { id: "guardian:series:blue-harbour", name: "Blue Harbour", type: "Series", year: 2024, rating: "PG" },
-  { id: "guardian:movie:night-train", name: "Night Train", type: "Movie", year: 2026, rating: "M" },
-  { id: "guardian:series:wild-signal", name: "Wild Signal", type: "Series", year: 2025, rating: "MA15+" },
-  { id: "guardian:movie:last-outpost", name: "The Last Outpost", type: "Movie", year: 2023, rating: "R18+" },
-  { id: "guardian:movie:unclassified", name: "Unclassified Fixture", type: "Movie", year: 2026, rating: null },
+  { id: "streamwarden:movie:family-orbit", name: "Family Orbit", type: "Movie", year: 2025, rating: "G" },
+  { id: "streamwarden:series:blue-harbour", name: "Blue Harbour", type: "Series", year: 2024, rating: "PG" },
+  { id: "streamwarden:movie:night-train", name: "Night Train", type: "Movie", year: 2026, rating: "M" },
+  { id: "streamwarden:series:wild-signal", name: "Wild Signal", type: "Series", year: 2025, rating: "MA15+" },
+  { id: "streamwarden:movie:last-outpost", name: "The Last Outpost", type: "Movie", year: 2023, rating: "R18+" },
+  { id: "streamwarden:movie:unclassified", name: "Unclassified Fixture", type: "Movie", year: 2026, rating: null },
 ];
 const defaultState: DashboardState = {
   country: "AU",
@@ -171,7 +171,7 @@ function configureMode(): void {
   modeBadge.textContent = apiMode ? "Connected" : mode === "demo" ? "Demo" : "Sign in";
   modeNotice.innerHTML = apiMode
     ? "<strong>Policy service connected:</strong> profile limits and title exceptions are saved to your household. Native playback enforcement is still a later milestone."
-    : "<strong>Public demo:</strong> changes stay on this device. Sign-in is available on hosted or self-hosted Guardian deployments.";
+    : "<strong>Public demo:</strong> changes stay on this device. Sign-in is available on hosted or self-hosted StreamWarden deployments.";
   authScreen.classList.toggle("hidden", mode !== "signed-out");
   logoutButton.classList.toggle("hidden", !apiMode);
   addProfileButton.classList.toggle("hidden", !apiMode);

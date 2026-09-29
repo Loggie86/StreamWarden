@@ -24,9 +24,9 @@ export function createMailer(config: ApiConfig): MagicLinkMailer {
         body: JSON.stringify({
           from: config.authFromEmail,
           to: [email],
-          subject: "Sign in to Nuvio Guardian",
-          html: `<p>Use this secure link to sign in to Nuvio Guardian:</p><p><a href="${escapeHtml(magicLink)}">Sign in to Nuvio Guardian</a></p><p>This link expires in 15 minutes and can be used once.</p>`,
-          text: `Sign in to Nuvio Guardian: ${magicLink}\n\nThis link expires in 15 minutes and can be used once.`,
+          subject: "Sign in to StreamWarden",
+          html: `<p>Use this secure link to sign in to StreamWarden:</p><p><a href="${escapeHtml(magicLink)}">Sign in to StreamWarden</a></p><p>This link expires in 15 minutes and can be used once.</p>`,
+          text: `Sign in to StreamWarden: ${magicLink}\n\nThis link expires in 15 minutes and can be used once.`,
         }),
       });
       if (!response.ok) {

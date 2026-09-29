@@ -1,4 +1,4 @@
-# Dashboard
+# StreamWarden dashboard
 
 The first dashboard prototype manages country selection, mock profile limits,
 whole-title movie and series overrides, and decision previews.
