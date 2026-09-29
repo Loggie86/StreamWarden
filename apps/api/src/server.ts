@@ -1,5 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
+import { readFile } from "node:fs/promises";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import { extname, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
 import { loadConfig, type ApiConfig } from "./config.ts";
 import { GuardianStore, type SessionHousehold } from "./database.ts";
@@ -30,6 +32,10 @@ export function createApiServer(dependencies: ApiDependencies) {
 
       if (request.method === "GET" && url.pathname === "/healthz") {
         sendJson(response, 200, { status: "ok" });
+        return;
+      }
+
+      if (request.method === "GET" && await serveDashboard(url.pathname, response, dependencies.config)) {
         return;
       }
 
@@ -324,6 +330,33 @@ function securityHeaders(response: ServerResponse): void {
   response.setHeader("Referrer-Policy", "no-referrer");
   response.setHeader("X-Frame-Options", "DENY");
   response.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+}
+
+async function serveDashboard(pathname: string, response: ServerResponse, config: ApiConfig): Promise<boolean> {
+  if (!config.dashboardDirectory || !["/", "/index.html", "/app.js", "/styles.css"].includes(pathname)) {
+    return false;
+  }
+  const root = resolve(config.dashboardDirectory);
+  const name = pathname === "/" ? "index.html" : pathname.slice(1);
+  const file = resolve(root, name);
+  if (file !== root && !file.startsWith(`${root}${sep}`)) return false;
+  try {
+    const body = await readFile(file);
+    const types: Record<string, string> = {
+      ".html": "text/html; charset=utf-8",
+      ".css": "text/css; charset=utf-8",
+      ".js": "text/javascript; charset=utf-8",
+    };
+    response.writeHead(200, {
+      "Content-Type": types[extname(file)] ?? "application/octet-stream",
+      "Cache-Control": "no-store",
+      "Content-Length": body.length,
+    });
+    response.end(body);
+  } catch {
+    sendJson(response, 404, { error: "Dashboard asset not found" });
+  }
+  return true;
 }
 
 function sendJson(response: ServerResponse, status: number, value: unknown): void {

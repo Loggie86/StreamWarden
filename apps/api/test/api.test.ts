@@ -18,6 +18,7 @@ const config: ApiConfig = {
   databasePath: ":memory:",
   publicBaseUrl: "http://127.0.0.1",
   dashboardPath: "/",
+  dashboardDirectory: null,
   mailProvider: "console",
   resendApiKey: null,
   authFromEmail: null,

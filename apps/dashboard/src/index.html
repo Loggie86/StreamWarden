@@ -16,7 +16,10 @@
           <small>Household controls</small>
         </span>
       </a>
-      <span class="prototype-badge">Prototype</span>
+      <div class="header-actions">
+        <span id="mode-badge" class="prototype-badge">Loading</span>
+        <button id="logout" class="text-button hidden" type="button">Sign out</button>
+      </div>
     </header>
 
     <main id="top" class="page-shell">
@@ -38,10 +41,8 @@
         </div>
       </section>
 
-      <section class="notice" aria-label="Prototype limitation">
-        <strong>Dashboard prototype:</strong>
-        changes stay on this device. It is not connected to Nuvio and cannot yet
-        block playback through other add-ons.
+      <section id="mode-notice" class="notice" aria-live="polite">
+        Checking for the Nuvio Guardian policy service…
       </section>
 
       <section aria-labelledby="profiles-title">
@@ -50,7 +51,10 @@
             <p class="eyebrow">Household</p>
             <h2 id="profiles-title">Profiles</h2>
           </div>
-          <button id="reset" class="text-button" type="button">Reset prototype</button>
+          <div>
+            <button id="add-profile" class="text-button hidden" type="button">Add profile</button>
+            <button id="reset" class="text-button" type="button">Reset demo</button>
+          </div>
         </div>
         <div id="profile-grid" class="profile-grid"></div>
       </section>
@@ -81,6 +85,36 @@
         </article>
       </section>
     </main>
+
+    <div id="auth-screen" class="auth-screen hidden">
+      <form id="login-form" class="panel auth-card">
+        <span class="brand-mark" aria-hidden="true">G</span>
+        <p class="eyebrow">Administrator sign in</p>
+        <h1>Open your household dashboard.</h1>
+        <p>No password needed. We’ll email you a secure sign-in link.</p>
+        <label for="login-email">Email address</label>
+        <input id="login-email" type="email" autocomplete="email" required />
+        <button id="login-submit" class="primary-button" type="submit">Email me a sign-in link</button>
+        <p id="login-message" class="form-message" role="status"></p>
+      </form>
+    </div>
+
+    <dialog id="profile-dialog" class="profile-dialog">
+      <form id="profile-form" method="dialog">
+        <h2>Add profile</h2>
+        <label for="profile-name">Profile name</label>
+        <input id="profile-name" maxlength="80" required />
+        <label for="profile-rating">Maximum Australian rating</label>
+        <select id="profile-rating">
+          <option>G</option><option selected>PG</option><option>M</option>
+          <option>MA15+</option><option>R18+</option><option>X18+</option>
+        </select>
+        <div class="dialog-actions">
+          <button id="profile-cancel" class="text-button" type="button">Cancel</button>
+          <button class="primary-button" type="submit">Add profile</button>
+        </div>
+      </form>
+    </dialog>
 
     <div id="toast" class="toast" role="status" aria-live="polite"></div>
     <script type="module" src="./app.js"></script>

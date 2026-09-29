@@ -56,13 +56,13 @@ The repository currently contains:
 
 ## Dashboard prototype
 
-The browser dashboard currently uses mock household profiles and fixture titles. It supports Australian limits, unrestricted profiles, whole-title approve/block exceptions, decision previews, search, and local browser persistence.
+The browser dashboard supports Australian limits, unrestricted profiles, whole-title approve/block exceptions, decision previews, and fixture-title search. It automatically uses the authenticated policy API when served by it, while GitHub Pages remains a local-data demo.
 
 ```bash
 npm run dashboard:dev
 ```
 
-Open `http://localhost:4173`. The public prototype is at [loggie86.github.io/nuvio-guardian](https://loggie86.github.io/nuvio-guardian/). It does not yet use the authenticated API or provide complete playback enforcement.
+Open `http://localhost:4173` for demo mode. The public prototype is at [loggie86.github.io/nuvio-guardian](https://loggie86.github.io/nuvio-guardian/). A hosted or self-hosted API deployment serves the same dashboard with magic-link sign-in and persistent household data. Complete playback enforcement is not implemented yet.
 
 ## Policy API and magic links
 

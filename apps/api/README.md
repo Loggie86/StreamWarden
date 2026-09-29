@@ -32,5 +32,6 @@ after 30 days. Production state-changing requests must include an `Origin`
 header that exactly matches `PUBLIC_BASE_URL`.
 
 The dashboard and API are designed to be served from the same origin. The
-GitHub Pages dashboard remains a fixture-data prototype until its API client is
-connected in the next milestone.
+API serves the built dashboard from `DASHBOARD_DIR` (default
+`./apps/dashboard/dist`). The GitHub Pages version automatically falls back to
+local demo data because it has no policy API.

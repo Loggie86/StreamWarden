@@ -4,6 +4,7 @@ export interface ApiConfig {
   databasePath: string;
   publicBaseUrl: string;
   dashboardPath: string;
+  dashboardDirectory: string | null;
   mailProvider: "console" | "resend";
   resendApiKey: string | null;
   authFromEmail: string | null;
@@ -29,6 +30,7 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
     databasePath: env.GUARDIAN_DB_PATH ?? "./data/guardian.sqlite",
     publicBaseUrl: (env.PUBLIC_BASE_URL ?? "http://localhost:8080").replace(/\/$/, ""),
     dashboardPath: env.DASHBOARD_PATH ?? "/",
+    dashboardDirectory: env.DASHBOARD_DIR ?? "./apps/dashboard/dist",
     mailProvider,
     resendApiKey: env.RESEND_API_KEY ?? null,
     authFromEmail: env.AUTH_FROM_EMAIL ?? null,

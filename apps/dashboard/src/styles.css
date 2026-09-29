@@ -97,6 +97,98 @@ select {
   font-weight: 800;
 }
 
+.header-actions,
+.dialog-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.auth-screen {
+  position: fixed;
+  z-index: 50;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgb(19 35 63 / 55%);
+  backdrop-filter: blur(10px);
+}
+
+.auth-card {
+  width: min(480px, 100%);
+  padding: 32px;
+}
+
+.auth-card .brand-mark {
+  margin-bottom: 24px;
+}
+
+.auth-card h1 {
+  font-size: 2.25rem;
+}
+
+.auth-card > p:not(.eyebrow) {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.auth-card input,
+.profile-dialog input {
+  width: 100%;
+  margin: 8px 0 16px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.primary-button {
+  padding: 11px 15px;
+  border: 0;
+  border-radius: 11px;
+  background: var(--raspberry);
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.primary-button:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.form-message {
+  min-height: 24px;
+  margin: 14px 0 0 !important;
+  color: var(--good) !important;
+}
+
+.profile-dialog {
+  width: min(430px, calc(100% - 28px));
+  padding: 0;
+  border: 0;
+  border-radius: 20px;
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+
+.profile-dialog::backdrop {
+  background: rgb(19 35 63 / 50%);
+}
+
+.profile-dialog form {
+  padding: 26px;
+}
+
+.profile-dialog .dialog-actions {
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
 .page-shell {
   width: min(1180px, calc(100% - 32px));
   margin: 30px auto 70px;
