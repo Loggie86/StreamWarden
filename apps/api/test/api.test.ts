@@ -4,12 +4,27 @@ import type { AddressInfo } from "node:net";
 import type { ApiConfig } from "../src/config.ts";
 import { StreamWardenStore } from "../src/database.ts";
 import type { MagicLinkMailer } from "../src/mailer.ts";
+import type { TitleCatalog } from "../src/catalog.ts";
 import { createApiServer } from "../src/server.ts";
 
 const links: string[] = [];
 const mailer: MagicLinkMailer = {
   async send(_email, link) {
     links.push(link);
+  },
+};
+const catalog: TitleCatalog = {
+  async search(query, country) {
+    return [{
+      id: "tvdb:series:123",
+      name: query === "blue" ? "Bluey" : "Example",
+      type: "Series",
+      year: 2018,
+      rating: "G",
+      ratingCountry: country,
+      imageUrl: null,
+      source: "TheTVDB",
+    }];
   },
 };
 const config: ApiConfig = {
@@ -22,13 +37,16 @@ const config: ApiConfig = {
   mailProvider: "console",
   resendApiKey: null,
   authFromEmail: null,
+  tvdbApiKey: null,
+  tvdbPin: null,
+  tvdbBaseUrl: "https://api4.thetvdb.com/v4",
   exposeDevelopmentLinks: false,
   production: false,
   magicLinkLifetimeMs: 15 * 60 * 1000,
   sessionLifetimeMs: 30 * 24 * 60 * 60 * 1000,
 };
 const store = new StreamWardenStore(":memory:");
-const server = createApiServer({ config, store, mailer });
+const server = createApiServer({ config, store, mailer, catalog });
 let origin = "";
 let sessionCookie = "";
 
@@ -112,6 +130,16 @@ describe("magic-link policy API", () => {
     });
     assert.equal(updated.status, 200);
     assert.equal((await updated.json()).profile.maximumRating, "M");
+  });
+
+  it("searches the configured live title catalogue", async () => {
+    const response = await request("/api/titles/search?q=blue");
+    assert.equal(response.status, 200);
+    const body = await response.json();
+    assert.equal(body.titles[0].id, "tvdb:series:123");
+    assert.equal(body.titles[0].name, "Bluey");
+    assert.equal(body.titles[0].rating, "G");
+    assert.equal(body.titles[0].ratingCountry, "AU");
   });
 
   it("persists whole-title overrides and creates a one-time installation secret", async () => {

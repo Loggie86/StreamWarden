@@ -17,6 +17,9 @@ services:
       STREAMWARDEN_DB_PATH: /data/streamwarden.sqlite
       MAIL_PROVIDER: console
       EXPOSE_DEV_MAGIC_LINKS: "1"
+      TVDB_API_KEY: "${TVDB_API_KEY:-}"
+      TVDB_PIN: "${TVDB_PIN:-}"
+      TVDB_API_BASE_URL: "${TVDB_API_BASE_URL:-https://api4.thetvdb.com/v4}"
     volumes:
       - streamwarden-data:/data
     healthcheck:

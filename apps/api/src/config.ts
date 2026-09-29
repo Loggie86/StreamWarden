@@ -8,6 +8,9 @@ export interface ApiConfig {
   mailProvider: "console" | "resend";
   resendApiKey: string | null;
   authFromEmail: string | null;
+  tvdbApiKey: string | null;
+  tvdbPin: string | null;
+  tvdbBaseUrl: string;
   exposeDevelopmentLinks: boolean;
   production: boolean;
   magicLinkLifetimeMs: number;
@@ -34,6 +37,9 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
     mailProvider,
     resendApiKey: env.RESEND_API_KEY ?? null,
     authFromEmail: env.AUTH_FROM_EMAIL ?? null,
+    tvdbApiKey: env.TVDB_API_KEY?.trim() || null,
+    tvdbPin: env.TVDB_PIN?.trim() || null,
+    tvdbBaseUrl: (env.TVDB_API_BASE_URL ?? "https://api4.thetvdb.com/v4").replace(/\/$/, ""),
     exposeDevelopmentLinks: !production && env.EXPOSE_DEV_MAGIC_LINKS === "1",
     production,
     magicLinkLifetimeMs: 15 * 60 * 1000,

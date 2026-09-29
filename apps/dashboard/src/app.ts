@@ -5,7 +5,7 @@ type Mode = "loading" | "demo" | "api" | "signed-out";
 
 interface Profile { id: string; name: string; limit: Limit; primary?: boolean }
 interface ApiProfile { id: string; name: string; maximumRating: Rating | null; unrestricted: boolean; primary: boolean }
-interface FixtureTitle { id: string; name: string; type: "Movie" | "Series"; year: number; rating: Rating | null }
+interface CatalogTitle { id: string; name: string; type: "Movie" | "Series"; year: number | null; rating: Rating | null; source?: "TheTVDB" }
 interface DashboardState {
   country: "AU";
   activeProfileId: string;
@@ -16,7 +16,7 @@ interface DashboardState {
 const storageKey = "streamwarden-dashboard-v1";
 const ratings: Rating[] = ["G", "PG", "M", "MA15+", "R18+", "X18+", "RC"];
 const orderedRatings: Rating[] = ["G", "PG", "M", "MA15+", "R18+", "X18+"];
-const fixtureTitles: FixtureTitle[] = [
+const fixtureTitles: CatalogTitle[] = [
   { id: "streamwarden:movie:family-orbit", name: "Family Orbit", type: "Movie", year: 2025, rating: "G" },
   { id: "streamwarden:series:blue-harbour", name: "Blue Harbour", type: "Series", year: 2024, rating: "PG" },
   { id: "streamwarden:movie:night-train", name: "Night Train", type: "Movie", year: 2026, rating: "M" },
@@ -40,6 +40,9 @@ const defaultState: DashboardState = {
 let mode: Mode = "loading";
 let state = loadDemoState();
 let search = "";
+let liveTitles: CatalogTitle[] = [];
+let titleSearchPending = false;
+let titleSearchTimer: number | undefined;
 let toastTimer: number | undefined;
 
 const profileGrid = required("profile-grid");
@@ -72,8 +75,22 @@ resetButton.addEventListener("click", () => {
   saveDemoAndRender("Demo reset");
 });
 titleSearch.addEventListener("input", () => {
-  search = titleSearch.value.trim().toLocaleLowerCase();
+  search = titleSearch.value.trim();
+  if (mode !== "api") {
+    renderTitles();
+    return;
+  }
+  if (titleSearchTimer !== undefined) window.clearTimeout(titleSearchTimer);
+  if (search.length < 2) {
+    liveTitles = [];
+    titleSearchPending = false;
+    renderTitles();
+    return;
+  }
+  titleSearchPending = true;
   renderTitles();
+  const requested = search;
+  titleSearchTimer = window.setTimeout(() => void searchLiveTitles(requested), 300);
 });
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
@@ -144,6 +161,7 @@ async function bootstrap(): Promise<void> {
       overrides: {},
     };
     mode = "api";
+    titleSearch.placeholder = "Search movies and series";
     if (state.activeProfileId) await loadOverrides(state.activeProfileId);
     configureMode();
     render();
@@ -154,6 +172,7 @@ async function bootstrap(): Promise<void> {
 
 function showDemo(): void {
   mode = "demo";
+  titleSearch.placeholder = "Search fixture titles";
   state = loadDemoState();
   configureMode();
   render();
@@ -251,19 +270,30 @@ function renderTitles(): void {
     return;
   }
   const profileOverrides = state.overrides[profile.id] ?? {};
-  const visible = fixtureTitles.filter((title) => `${title.name} ${title.type} ${title.year}`.toLocaleLowerCase().includes(search));
+  const visible = mode === "api"
+    ? liveTitles
+    : fixtureTitles.filter((title) => `${title.name} ${title.type} ${title.year}`.toLocaleLowerCase().includes(search.toLocaleLowerCase()));
   const count = Object.keys(profileOverrides).length;
   overrideCount.textContent = `${count} override${count === 1 ? "" : "s"}`;
+  if (mode === "api" && search.length < 2) {
+    titleResults.innerHTML = '<div class="empty-state">Search for a movie or series.</div>';
+    return;
+  }
+  if (mode === "api" && titleSearchPending) {
+    titleResults.innerHTML = '<div class="empty-state">Searching TheTVDB…</div>';
+    return;
+  }
   if (!visible.length) {
-    titleResults.innerHTML = '<div class="empty-state">No fixture titles match that search.</div>';
+    titleResults.innerHTML = `<div class="empty-state">No ${mode === "api" ? "titles" : "fixture titles"} match that search.</div>`;
     return;
   }
   titleResults.innerHTML = visible.map((title) => {
     const override = profileOverrides[title.id];
     const decision = evaluate(profile, title, override);
-    return `<div class="title-row"><div><h3>${title.name}</h3><div class="title-meta"><span>${title.type}</span><span>${title.year}</span><span class="rating-chip">${title.rating ?? "Unrated"}</span></div>
-      <div class="decision-line"><span class="decision-chip ${decision.allowed ? "allowed" : "blocked"}">${decision.allowed ? "Allowed" : "Blocked"}</span><span class="decision-reason">${decision.reason}</span></div></div>
-      <div class="actions"><button class="action-button ${override === "APPROVE" ? "selected" : ""}" type="button" data-title="${title.id}" data-action="APPROVE">Approve</button><button class="action-button block ${override === "BLOCK" ? "selected" : ""}" type="button" data-title="${title.id}" data-action="BLOCK">Block</button>${override ? `<button class="action-button clear" type="button" data-title="${title.id}" data-action="CLEAR">Clear</button>` : ""}</div></div>`;
+    const safeId = escapeHtml(title.id);
+    return `<div class="title-row"><div><h3>${escapeHtml(title.name)}</h3><div class="title-meta"><span>${escapeHtml(title.type)}</span><span>${escapeHtml(String(title.year ?? "Year unknown"))}</span><span class="rating-chip">${escapeHtml(title.rating ?? "Unrated")}</span></div>
+      <div class="decision-line"><span class="decision-chip ${decision.allowed ? "allowed" : "blocked"}">${decision.allowed ? "Allowed" : "Blocked"}</span><span class="decision-reason">${escapeHtml(decision.reason)}</span></div></div>
+      <div class="actions"><button class="action-button ${override === "APPROVE" ? "selected" : ""}" type="button" data-title="${safeId}" data-action="APPROVE">Approve</button><button class="action-button block ${override === "BLOCK" ? "selected" : ""}" type="button" data-title="${safeId}" data-action="BLOCK">Block</button>${override ? `<button class="action-button clear" type="button" data-title="${safeId}" data-action="CLEAR">Clear</button>` : ""}</div></div>`;
   }).join("");
   titleResults.querySelectorAll<HTMLButtonElement>("[data-action]").forEach((button) => {
     button.addEventListener("click", () => void setTitleOverride(profile, button.dataset.title ?? "", button.dataset.action ?? ""));
@@ -278,7 +308,8 @@ async function setTitleOverride(profile: Profile, titleId: string, action: strin
   else overrides[titleId] = action as Override;
   renderTitles();
   if (mode === "demo") return saveDemoAndRender(`${profile.name} title exception updated`);
-  const title = fixtureTitles.find((item) => item.id === titleId)!;
+  const title = (mode === "api" ? liveTitles : fixtureTitles).find((item) => item.id === titleId);
+  if (!title) return;
   try {
     const response = await apiRequest(`/api/profiles/${encodeURIComponent(profile.id)}/overrides/${encodeURIComponent(titleId)}`, action === "CLEAR" ? { method: "DELETE" } : {
       method: "PUT",
@@ -294,6 +325,26 @@ async function setTitleOverride(profile: Profile, titleId: string, action: strin
   }
 }
 
+async function searchLiveTitles(query: string): Promise<void> {
+  try {
+    const response = await apiRequest(`/api/titles/search?q=${encodeURIComponent(query)}`);
+    const body = await response.json() as { titles?: CatalogTitle[]; error?: string };
+    if (!response.ok) throw new Error(body.error ?? "Could not search titles.");
+    if (search !== query) return;
+    liveTitles = body.titles ?? [];
+  } catch (error) {
+    if (search === query) {
+      liveTitles = [];
+      showToast(messageFrom(error));
+    }
+  } finally {
+    if (search === query) {
+      titleSearchPending = false;
+      renderTitles();
+    }
+  }
+}
+
 async function loadOverrides(profileId: string): Promise<void> {
   if (state.overrides[profileId]) return;
   const response = await apiRequest(`/api/profiles/${encodeURIComponent(profileId)}/overrides`);
@@ -302,7 +353,7 @@ async function loadOverrides(profileId: string): Promise<void> {
   state.overrides[profileId] = Object.fromEntries(body.overrides.map((item) => [item.titleId, item.decision]));
 }
 
-function evaluate(profile: Profile, title: FixtureTitle, override?: Override): { allowed: boolean; reason: string } {
+function evaluate(profile: Profile, title: CatalogTitle, override?: Override): { allowed: boolean; reason: string } {
   if (override === "BLOCK") return { allowed: false, reason: "Explicit block" };
   if (title.rating === "RC") return { allowed: false, reason: "Refused classification" };
   if (profile.limit === "UNRESTRICTED") return { allowed: true, reason: "Unrestricted profile" };

@@ -35,3 +35,9 @@ The dashboard and API are designed to be served from the same origin. The
 API serves the built dashboard from `DASHBOARD_DIR` (default
 `./apps/dashboard/dist`). The GitHub Pages version automatically falls back to
 local demo data because it has no policy API.
+
+## Live title search
+
+Set `TVDB_API_KEY` to enable authenticated movie and series search through TheTVDB. Set `TVDB_PIN` only when the selected TheTVDB access model requires a subscriber PIN. Search results are enriched with country-specific content ratings; missing or unsupported ratings remain unrated and therefore blocked until approved.
+
+The dashboard displays the attribution required by TheTVDB. API access must be registered for the StreamWarden project and used in accordance with TheTVDB's current licensing terms.

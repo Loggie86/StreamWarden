@@ -4,6 +4,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { extname, resolve, sep } from "node:path";
 import { pathToFileURL } from "node:url";
 import { loadConfig, type ApiConfig } from "./config.ts";
+import { TvdbCatalog, type TitleCatalog } from "./catalog.ts";
 import { StreamWardenStore, type SessionHousehold } from "./database.ts";
 import { createMailer, type MagicLinkMailer } from "./mailer.ts";
 
@@ -13,6 +14,7 @@ export interface ApiDependencies {
   config: ApiConfig;
   store: StreamWardenStore;
   mailer: MagicLinkMailer;
+  catalog?: TitleCatalog | null;
   now?: () => number;
 }
 
@@ -113,6 +115,23 @@ export function createApiServer(dependencies: ApiDependencies) {
       }
 
       if (!session) return unauthorized(response);
+
+      if (request.method === "GET" && url.pathname === "/api/titles/search") {
+        const query = (url.searchParams.get("q") ?? "").trim();
+        if (query.length < 2 || query.length > 100) return badRequest(response, "Search must be 2–100 characters");
+        if (!dependencies.catalog) {
+          sendJson(response, 503, { error: "TheTVDB is not configured" });
+          return;
+        }
+        try {
+          const titles = await dependencies.catalog.search(query, session.country);
+          sendJson(response, 200, { titles });
+        } catch (error) {
+          console.error("TheTVDB search failed", error);
+          sendJson(response, 502, { error: "Title search is temporarily unavailable" });
+        }
+        return;
+      }
 
       if (request.method === "GET" && url.pathname === "/api/profiles") {
         sendJson(response, 200, { profiles: dependencies.store.listProfiles(session.householdId) });
@@ -402,7 +421,10 @@ if (isDirectRun) {
   const config = loadConfig();
   const store = new StreamWardenStore(config.databasePath);
   const mailer = createMailer(config);
-  createApiServer({ config, store, mailer }).listen(config.port, config.host, () => {
+  const catalog = config.tvdbApiKey
+    ? new TvdbCatalog(config.tvdbApiKey, config.tvdbPin, config.tvdbBaseUrl)
+    : null;
+  createApiServer({ config, store, mailer, catalog }).listen(config.port, config.host, () => {
     console.log(`StreamWarden API listening on ${config.publicBaseUrl}`);
   });
 }
