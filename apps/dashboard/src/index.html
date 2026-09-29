@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#13233f" />
+    <title>Nuvio Guardian</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Nuvio Guardian home">
+        <span class="brand-mark" aria-hidden="true">G</span>
+        <span>
+          <strong>Nuvio Guardian</strong>
+          <small>Household controls</small>
+        </span>
+      </a>
+      <span class="prototype-badge">Prototype</span>
+    </header>
+
+    <main id="top" class="page-shell">
+      <section class="hero panel">
+        <div>
+          <p class="eyebrow">Primary profile dashboard</p>
+          <h1>One place to manage every profile.</h1>
+          <p>
+            Set rating limits, approve exceptions and understand every decision.
+            Unknown ratings stay blocked until you approve them.
+          </p>
+        </div>
+        <div class="setup-card">
+          <label for="country">Rating country</label>
+          <select id="country">
+            <option value="AU">Australia</option>
+          </select>
+          <small>More country scales will be added after data-source validation.</small>
+        </div>
+      </section>
+
+      <section class="notice" aria-label="Prototype limitation">
+        <strong>Dashboard prototype:</strong>
+        changes stay on this device. It is not connected to Nuvio and cannot yet
+        block playback through other add-ons.
+      </section>
+
+      <section aria-labelledby="profiles-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Household</p>
+            <h2 id="profiles-title">Profiles</h2>
+          </div>
+          <button id="reset" class="text-button" type="button">Reset prototype</button>
+        </div>
+        <div id="profile-grid" class="profile-grid"></div>
+      </section>
+
+      <section class="workspace-grid">
+        <article class="panel profile-editor" aria-labelledby="profile-editor-title">
+          <div id="profile-editor"></div>
+        </article>
+
+        <article class="panel title-manager" aria-labelledby="title-manager-title">
+          <div class="section-heading compact">
+            <div>
+              <p class="eyebrow">Whole movie or series</p>
+              <h2 id="title-manager-title">Title exceptions</h2>
+            </div>
+            <span id="override-count" class="count-badge"></span>
+          </div>
+          <label class="search-box" for="title-search">
+            <span aria-hidden="true">⌕</span>
+            <input
+              id="title-search"
+              type="search"
+              placeholder="Search fixture titles"
+              autocomplete="off"
+            />
+          </label>
+          <div id="title-results" class="title-results"></div>
+        </article>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

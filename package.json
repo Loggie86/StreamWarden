@@ -12,6 +12,8 @@
   },
   "scripts": {
     "test": "node --experimental-strip-types --test packages/policy-engine/test/*.test.ts",
-    "test:watch": "node --experimental-strip-types --test --watch packages/policy-engine/test/*.test.ts"
+    "test:watch": "node --experimental-strip-types --test --watch packages/policy-engine/test/*.test.ts",
+    "dashboard:build": "node scripts/build-dashboard.mjs",
+    "dashboard:dev": "npm run dashboard:build && node scripts/serve-dashboard.mjs"
   }
 }

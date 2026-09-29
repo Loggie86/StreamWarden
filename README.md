@@ -56,3 +56,14 @@ Node.js 24 or newer is required. The repository currently contains:
 - `apps/dashboard` - administrator dashboard placeholder
 - `apps/addon` - Stremio-compatible add-on placeholder
 - `.github/workflows/test.yml` - automated policy tests
+
+
+## Dashboard prototype
+
+The first browser dashboard uses mock household profiles and fixture titles. It supports Australian limits, unrestricted profiles, whole-title approve/block exceptions, decision previews, search, and local browser persistence.
+
+```bash
+npm run dashboard:dev
+```
+
+Open `http://localhost:4173`. This prototype does not connect to Nuvio or provide complete playback enforcement.

@@ -1,6 +1,13 @@
 # Dashboard
 
-The administrator dashboard will manage country selection, profile limits,
-movie and series overrides, decision inspection, and installation status.
+The first dashboard prototype manages country selection, mock profile limits,
+whole-title movie and series overrides, and decision previews.
 
-Implementation begins after the policy-engine contract is stable.
+Run it locally from the repository root:
+
+```bash
+npm run dashboard:dev
+```
+
+Then open `http://localhost:4173`. Prototype changes are kept in browser local
+storage. No Nuvio credentials or viewing data are collected.
