@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { normalizeRating, selectRating, TvdbCatalog } from "../src/catalog.ts";
+import { normalizeRating, rankSearchResults, selectRating, TvdbCatalog } from "../src/catalog.ts";
 
 describe("TheTVDB catalogue", () => {
   it("normalizes Australian classification labels conservatively", () => {
@@ -41,5 +41,25 @@ describe("TheTVDB catalogue", () => {
       { id: "tvdb:series:42", name: "Bluey", rating: "G" },
     ]);
     assert.equal(calls.filter((url) => url.endsWith("/login")).length, 1);
+  });
+
+  it("ranks the useful exact match above older unrated names and prefixes", () => {
+    const titles = rankSearchResults([
+      { id: "old", name: "Bluey", type: "Series", year: 1976, rating: null, ratingCountry: "AU", imageUrl: null, source: "TheTVDB" },
+      { id: "movie", name: "Bluey", type: "Movie", year: 2015, rating: null, ratingCountry: "AU", imageUrl: null, source: "TheTVDB" },
+      { id: "current", name: "Bluey", type: "Series", year: 2018, rating: "G", ratingCountry: "AU", imageUrl: "https://artworks.thetvdb.com/bluey.jpg", source: "TheTVDB" },
+      { id: "minisodes", name: "Bluey Minisodes", type: "Series", year: 2024, rating: "G", ratingCountry: "AU", imageUrl: null, source: "TheTVDB" },
+    ], "Bluey");
+
+    assert.deepEqual(titles.map((title) => title.id), ["current", "minisodes", "movie", "old"]);
+  });
+
+  it("removes duplicate search records while preferring richer metadata", () => {
+    const titles = rankSearchResults([
+      { id: "plain", name: "Bluey", type: "Series", year: 2018, rating: null, ratingCountry: "AU", imageUrl: null, source: "TheTVDB" },
+      { id: "rich", name: "Bluey", type: "Series", year: 2018, rating: "G", ratingCountry: "AU", imageUrl: "https://artworks.thetvdb.com/bluey.jpg", source: "TheTVDB" },
+    ], "Bluey");
+
+    assert.deepEqual(titles.map((title) => title.id), ["rich"]);
   });
 });

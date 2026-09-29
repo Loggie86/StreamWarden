@@ -5,7 +5,7 @@ type Mode = "loading" | "demo" | "api" | "signed-out";
 
 interface Profile { id: string; name: string; limit: Limit; primary?: boolean }
 interface ApiProfile { id: string; name: string; maximumRating: Rating | null; unrestricted: boolean; primary: boolean }
-interface CatalogTitle { id: string; name: string; type: "Movie" | "Series"; year: number | null; rating: Rating | null; source?: "TheTVDB" }
+interface CatalogTitle { id: string; name: string; type: "Movie" | "Series"; year: number | null; rating: Rating | null; imageUrl?: string | null; source?: "TheTVDB" }
 interface DashboardState {
   country: "AU";
   activeProfileId: string;
@@ -291,7 +291,11 @@ function renderTitles(): void {
     const override = profileOverrides[title.id];
     const decision = evaluate(profile, title, override);
     const safeId = escapeHtml(title.id);
-    return `<div class="title-row"><div><h3>${escapeHtml(title.name)}</h3><div class="title-meta"><span>${escapeHtml(title.type)}</span><span>${escapeHtml(String(title.year ?? "Year unknown"))}</span><span class="rating-chip">${escapeHtml(title.rating ?? "Unrated")}</span></div>
+    const posterUrl = safeImageUrl(title.imageUrl);
+    const poster = posterUrl
+      ? `<img class="title-poster" src="${escapeHtml(posterUrl)}" alt="" loading="lazy" referrerpolicy="no-referrer" />`
+      : `<div class="title-poster placeholder" aria-hidden="true">${escapeHtml(title.type === "Movie" ? "M" : "TV")}</div>`;
+    return `<div class="title-row">${poster}<div class="title-copy"><h3>${escapeHtml(title.name)}</h3><div class="title-meta"><span>${escapeHtml(title.type)}</span><span>${escapeHtml(String(title.year ?? "Year unknown"))}</span><span class="rating-chip">${escapeHtml(title.rating ?? "Unrated")}</span></div>
       <div class="decision-line"><span class="decision-chip ${decision.allowed ? "allowed" : "blocked"}">${decision.allowed ? "Allowed" : "Blocked"}</span><span class="decision-reason">${escapeHtml(decision.reason)}</span></div></div>
       <div class="actions"><button class="action-button ${override === "APPROVE" ? "selected" : ""}" type="button" data-title="${safeId}" data-action="APPROVE">Approve</button><button class="action-button block ${override === "BLOCK" ? "selected" : ""}" type="button" data-title="${safeId}" data-action="BLOCK">Block</button>${override ? `<button class="action-button clear" type="button" data-title="${safeId}" data-action="CLEAR">Clear</button>` : ""}</div></div>`;
   }).join("");
@@ -403,6 +407,13 @@ function showToast(message: string): void {
 }
 function messageFrom(error: unknown): string { return error instanceof Error ? error.message : "Something went wrong."; }
 function escapeHtml(value: string): string { return value.replaceAll("&", "&amp;").replaceAll('"', "&quot;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"); }
+function safeImageUrl(value?: string | null): string | null {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" ? url.href : null;
+  } catch { return null; }
+}
 function required(id: string): HTMLElement {
   const element = document.getElementById(id);
   if (!element) throw new Error(`Missing dashboard element: ${id}`);

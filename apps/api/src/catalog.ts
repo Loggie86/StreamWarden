@@ -75,9 +75,12 @@ export class TvdbCatalog implements TitleCatalog {
     );
     const candidates = (response.data ?? [])
       .filter((item) => item.type === "movie" || item.type === "series")
-      .slice(0, 8);
+      .slice(0, 10);
     const titles = await Promise.all(candidates.map((item) => this.enrich(item, cleanCountry)));
-    const available = titles.filter((title): title is CatalogTitle => title !== null);
+    const available = rankSearchResults(
+      titles.filter((title): title is CatalogTitle => title !== null),
+      cleanQuery,
+    ).slice(0, 8);
     this.cache.set(cacheKey, { expiresAt: this.now() + 10 * 60 * 1000, titles: available });
     return available;
   }
@@ -142,6 +145,41 @@ export class TvdbCatalog implements TitleCatalog {
     this.tokenExpiresAt = this.now() + 28 * 24 * 60 * 60 * 1000;
     return token;
   }
+}
+
+export function rankSearchResults(titles: CatalogTitle[], query: string): CatalogTitle[] {
+  const normalizedQuery = normalizeSearchText(query);
+  const unique = new Map<string, CatalogTitle>();
+  for (const title of titles) {
+    const key = `${title.type}:${normalizeSearchText(title.name)}:${title.year ?? "unknown"}`;
+    const existing = unique.get(key);
+    if (!existing || (!existing.rating && title.rating) || (!existing.imageUrl && title.imageUrl)) {
+      unique.set(key, title);
+    }
+  }
+
+  return [...unique.values()].sort((left, right) => {
+    const scoreDifference = relevanceScore(right, normalizedQuery) - relevanceScore(left, normalizedQuery);
+    if (scoreDifference !== 0) return scoreDifference;
+    const yearDifference = (right.year ?? 0) - (left.year ?? 0);
+    return yearDifference || left.name.localeCompare(right.name);
+  });
+}
+
+function relevanceScore(title: CatalogTitle, normalizedQuery: string): number {
+  const normalizedName = normalizeSearchText(title.name);
+  let score = 0;
+  if (normalizedName === normalizedQuery) score += 800;
+  else if (normalizedName.startsWith(normalizedQuery)) score += 500;
+  else if (normalizedName.includes(normalizedQuery)) score += 250;
+  if (title.rating) score += 400;
+  if (title.imageUrl) score += 40;
+  if (title.year) score += Math.max(0, Math.min(title.year, new Date().getUTCFullYear() + 2) - 1900);
+  return score;
+}
+
+function normalizeSearchText(value: string): string {
+  return value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
 }
 
 export function selectRating(ratings: TvdbContentRating[], country: string): CatalogRating | null {
